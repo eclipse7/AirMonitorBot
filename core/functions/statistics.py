@@ -136,7 +136,7 @@ def co2_statistic(bot: Bot, update: Update, session, hour=1):
     ymin, ymax = plt.ylim()  # return the current ylim
     y_delta = ymax - ymin
     y_center = (ymax + ymin) / 2
-    scale = 800
+    scale = 600
     if abs(y_delta) < scale:
         ymax = y_center + scale / 2
         ymin = y_center - scale / 2
