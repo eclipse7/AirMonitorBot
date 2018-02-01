@@ -40,10 +40,11 @@ def temp_statistic(bot: Bot, update: Update, session, hour=1):
 
     ymin, ymax = plt.ylim()  # return the current ylim
     y_delta = ymax - ymin
+    y_center = (ymax + ymin) / 2
     scale = 20
     if abs(y_delta) < scale:
-        ymax = y_delta/2 + scale/2
-        ymin = y_delta/2 - scale/2
+        ymax = y_center + scale / 2
+        ymin = y_center - scale / 2
         print(ymin)
         print(ymax)
         print(y_delta)
@@ -85,10 +86,11 @@ def hum_statistic(bot: Bot, update: Update, session, hour=1):
 
     ymin, ymax = plt.ylim()  # return the current ylim
     y_delta = ymax - ymin
+    y_center = (ymax + ymin) / 2
     scale = 40
     if abs(y_delta) < scale:
-        ymax = y_delta / 2 + scale / 2
-        ymin = y_delta / 2 - scale / 2
+        ymax = y_center + scale / 2
+        ymin = y_center - scale / 2
         if ymax > 105:
             ymax = 105
             ymin = ymax - scale
@@ -133,10 +135,11 @@ def co2_statistic(bot: Bot, update: Update, session, hour=1):
 
     ymin, ymax = plt.ylim()  # return the current ylim
     y_delta = ymax - ymin
+    y_center = (ymax + ymin) / 2
     scale = 800
     if abs(y_delta) < scale:
-        ymax = y_delta / 2 + scale / 2
-        ymin = y_delta / 2 - scale / 2
+        ymax = y_center + scale / 2
+        ymin = y_center - scale / 2
         if ymax > 5000:
             ymax = 5000
             ymin = ymax - scale
