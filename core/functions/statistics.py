@@ -1,7 +1,7 @@
 import os
 from datetime import datetime, timedelta
 
-import matplotlib.pyplot as plot
+import matplotlib.pyplot as plt
 from sqlalchemy import func, tuple_
 from telegram import Update, Bot
 
@@ -28,19 +28,31 @@ def temp_statistic(bot: Bot, update: Update, session, hour=1):
     device_data = session.query(Device).filter(datetime.now() - timedelta(
                     minutes=hour*60) < Device.date).order_by(Device.date).all()
 
-    plot.switch_backend('ps')
-    plot.xlabel(PLOT_X_LABEL_TEMP)
-    plot.ylabel(PLOT_Y_LABEL_TEMP)
+    plt.switch_backend('ps')
+    plt.xlabel(PLOT_X_LABEL_TEMP)
+    plt.ylabel(PLOT_Y_LABEL_TEMP)
     x = [data.date for data in device_data]
     y = [data.temp for data in device_data]
 
     x.append(datetime.now())
     y.append(y[-1])
-    plot.plot(x, y)
-    plot.gcf().autofmt_xdate()
+    plt.plot(x, y)
+
+    ymin, ymax = plt.ylim()  # return the current ylim
+    y_delta = ymax - ymin
+    scale = 20
+    if abs(y_delta) < scale:
+        ymax = y_delta/2 + scale/2
+        ymin = y_delta/2 - scale/2
+        print(ymin)
+        print(ymax)
+        print(y_delta)
+    plt.ylim(ymin, ymax)
+
+    plt.gcf().autofmt_xdate()
     filename = str(datetime.now()).replace(':', '').replace(' ', '').replace('-', '') + '.png'
     with open(filename, 'wb') as file:
-        plot.savefig(file, format='png')
+        plt.savefig(file, format='png')
 
     text = 'Temperature '
     if hour == 1:
@@ -53,7 +65,7 @@ def temp_statistic(bot: Bot, update: Update, session, hour=1):
 
     with open(filename, 'rb') as file:
         bot.sendPhoto(update.message.chat.id, file, text, reply_markup=generate_hour_markup())
-    plot.clf()
+    plt.clf()
     os.remove(filename)
 
 
@@ -61,19 +73,34 @@ def hum_statistic(bot: Bot, update: Update, session, hour=1):
     device_data = session.query(Device).filter(datetime.now() - timedelta(
                     minutes=hour*60) < Device.date).order_by(Device.date).all()
 
-    plot.switch_backend('ps')
-    plot.xlabel(PLOT_X_LABEL_HUM)
-    plot.ylabel(PLOT_Y_LABEL_HUM)
+    plt.switch_backend('ps')
+    plt.xlabel(PLOT_X_LABEL_HUM)
+    plt.ylabel(PLOT_Y_LABEL_HUM)
     x = [data.date for data in device_data]
     y = [data.hum for data in device_data]
 
     x.append(datetime.now())
     y.append(y[-1])
-    plot.plot(x, y)
-    plot.gcf().autofmt_xdate()
+    plt.plot(x, y)
+
+    ymin, ymax = plt.ylim()  # return the current ylim
+    y_delta = ymax - ymin
+    scale = 40
+    if abs(y_delta) < scale:
+        ymax = y_delta / 2 + scale / 2
+        ymin = y_delta / 2 - scale / 2
+        if ymax > 105:
+            ymax = 105
+            ymin = ymax - scale
+        if ymin < -5:
+            ymin = -5
+            ymax = ymin + scale
+    plt.ylim(ymin, ymax)
+
+    plt.gcf().autofmt_xdate()
     filename = str(datetime.now()).replace(':', '').replace(' ', '').replace('-', '') + '.png'
     with open(filename, 'wb') as file:
-        plot.savefig(file, format='png')
+        plt.savefig(file, format='png')
 
     text = 'Humidity '
     if hour == 1:
@@ -86,7 +113,7 @@ def hum_statistic(bot: Bot, update: Update, session, hour=1):
 
     with open(filename, 'rb') as file:
         bot.sendPhoto(update.message.chat.id, file, text, reply_markup=generate_hour_markup())
-    plot.clf()
+    plt.clf()
     os.remove(filename)
 
 
@@ -94,19 +121,34 @@ def co2_statistic(bot: Bot, update: Update, session, hour=1):
     device_data = session.query(Device).filter(datetime.now() - timedelta(
                     minutes=hour*60) < Device.date).order_by(Device.date).all()
 
-    plot.switch_backend('ps')
-    plot.xlabel(PLOT_X_LABEL_HUM)
-    plot.ylabel("CO2")
+    plt.switch_backend('ps')
+    plt.xlabel(PLOT_X_LABEL_HUM)
+    plt.ylabel("CO2")
     x = [data.date for data in device_data]
     y = [data.ppm for data in device_data]
 
     x.append(datetime.now())
     y.append(y[-1])
-    plot.plot(x, y)
-    plot.gcf().autofmt_xdate()
+    plt.plot(x, y)
+
+    ymin, ymax = plt.ylim()  # return the current ylim
+    y_delta = ymax - ymin
+    scale = 800
+    if abs(y_delta) < scale:
+        ymax = y_delta / 2 + scale / 2
+        ymin = y_delta / 2 - scale / 2
+        if ymax > 5000:
+            ymax = 5000
+            ymin = ymax - scale
+        if ymin < 380:
+            ymin = 380
+            ymax = ymin + scale
+    plt.ylim(ymin, ymax)
+
+    plt.gcf().autofmt_xdate()
     filename = str(datetime.now()).replace(':', '').replace(' ', '').replace('-', '') + '.png'
     with open(filename, 'wb') as file:
-        plot.savefig(file, format='png')
+        plt.savefig(file, format='png')
 
     text = 'CO2 '
     if hour == 1:
@@ -119,5 +161,5 @@ def co2_statistic(bot: Bot, update: Update, session, hour=1):
 
     with open(filename, 'rb') as file:
         bot.sendPhoto(update.message.chat.id, file, text, reply_markup=generate_hour_markup())
-    plot.clf()
+    plt.clf()
     os.remove(filename)
