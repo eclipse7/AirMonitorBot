@@ -104,7 +104,7 @@ def main():
     disp.add_error_handler(error)
 
     # Start the Bot
-    updater.start_polling()
+    updater.start_polling(poll_interval=1)
     # app.run(port=API_PORT)
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
