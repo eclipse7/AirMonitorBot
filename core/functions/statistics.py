@@ -45,9 +45,6 @@ def temp_statistic(bot: Bot, update: Update, session, hour=1):
     if abs(y_delta) < scale:
         ymax = y_center + scale / 2
         ymin = y_center - scale / 2
-        print(ymin)
-        print(ymax)
-        print(y_delta)
     plt.ylim(ymin, ymax)
 
     plt.gcf().autofmt_xdate()
