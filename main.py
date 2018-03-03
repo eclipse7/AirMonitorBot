@@ -2,6 +2,8 @@
 
 import logging
 
+import time
+
 from telegram import (
     Bot, Update
 )
@@ -24,61 +26,69 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
-
-# Without @run_async
+@run_async
 @user_allowed
 def manage_all(bot: Bot, update: Update, session, chat_data: dict):
     if update.message.chat.type == 'private':
-        if not update.message.text:
+        text = update.message.text
+        if not text:
             return
 
-        text = update.message.text
-        if update.message.text:
-            if text == USER_COMMAND_DATA:
-                data(bot, update, session)
+        # Avoid flood
+        now = time.time()
+        if ((now - chat_data.get('last_time', 0)) < 1.1) and (chat_data.get('last_text', None) == text) or \
+                ((now - chat_data.get('last_time', 0)) < 0.2):
+            chat_data['last_text'] = text
+            chat_data['last_time'] = now
+            return
+        chat_data['last_time'] = now
+        chat_data['last_text'] = text
 
-            elif text == USER_COMMAND_CO2:
-                chat_data['mode'] = 'co2'
+        if text == USER_COMMAND_DATA:
+            data(bot, update, session)
+
+        elif text == USER_COMMAND_CO2:
+            chat_data['mode'] = 'co2'
+            co2_statistic(bot, update, session, hour=1)
+
+        elif text == USER_COMMAND_TEMPERATURE:
+            chat_data['mode'] = 'temp'
+            temp_statistic(bot, update, session, hour=1)
+
+        elif text == USER_COMMAND_HUMIDITY:
+            chat_data['mode'] = 'hum'
+            hum_statistic(bot, update, session, hour=1)
+
+        elif text == USER_COMMAND_1_HOUR:
+            mode = chat_data['mode']
+            if mode == 'co2':
                 co2_statistic(bot, update, session, hour=1)
-
-            elif text == USER_COMMAND_TEMPERATURE:
-                chat_data['mode'] = 'temp'
+            elif mode == 'temp':
                 temp_statistic(bot, update, session, hour=1)
-
-            elif text == USER_COMMAND_HUMIDITY:
-                chat_data['mode'] = 'hum'
+            elif mode == 'hum':
                 hum_statistic(bot, update, session, hour=1)
 
-            elif text == USER_COMMAND_1_HOUR:
-                mode = chat_data['mode']
-                if mode == 'co2':
-                    co2_statistic(bot, update, session, hour=1)
-                elif mode == 'temp':
-                    temp_statistic(bot, update, session, hour=1)
-                elif mode == 'hum':
-                    hum_statistic(bot, update, session, hour=1)
+        elif text == USER_COMMAND_3_HOUR:
+            mode = chat_data['mode']
+            if mode == 'co2':
+                co2_statistic(bot, update, session, hour=3)
+            elif mode == 'temp':
+                temp_statistic(bot, update, session, hour=3)
+            elif mode == 'hum':
+                hum_statistic(bot, update, session, hour=3)
 
-            elif text == USER_COMMAND_3_HOUR:
-                mode = chat_data['mode']
-                if mode == 'co2':
-                    co2_statistic(bot, update, session, hour=3)
-                elif mode == 'temp':
-                    temp_statistic(bot, update, session, hour=3)
-                elif mode == 'hum':
-                    hum_statistic(bot, update, session, hour=3)
+        elif text == USER_COMMAND_24_HOUR:
+            mode = chat_data['mode']
+            if mode == 'co2':
+                co2_statistic(bot, update, session, hour=24)
+            elif mode == 'temp':
+                temp_statistic(bot, update, session, hour=24)
+            elif mode == 'hum':
+                hum_statistic(bot, update, session, hour=24)
 
-            elif text == USER_COMMAND_24_HOUR:
-                mode = chat_data['mode']
-                if mode == 'co2':
-                    co2_statistic(bot, update, session, hour=24)
-                elif mode == 'temp':
-                    temp_statistic(bot, update, session, hour=24)
-                elif mode == 'hum':
-                    hum_statistic(bot, update, session, hour=24)
-
-            else:
-                user_panel(bot, update)
-                chat_data['mode'] = ''
+        else:
+            user_panel(bot, update)
+            chat_data['mode'] = ''
 
 
 def main():
