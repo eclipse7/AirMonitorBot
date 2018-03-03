@@ -14,7 +14,7 @@ from telegram.ext.dispatcher import run_async
 from config import TOKEN
 from core.commands import *
 from core.functions.common import (
-    user_panel, error
+    ping, user_panel, error
 )
 from core.functions.statistics import data, temp_statistic, hum_statistic, co2_statistic
 from core.types import user_allowed
@@ -25,9 +25,9 @@ logging.basicConfig(
 )
 
 
-@run_async
+# Without @run_async
 @user_allowed
-def manage_all(bot: Bot, update: Update, session, chat_data: dict, job_queue):
+def manage_all(bot: Bot, update: Update, session, chat_data: dict):
     if update.message.chat.type == 'private':
         if not update.message.text:
             return
@@ -39,20 +39,14 @@ def manage_all(bot: Bot, update: Update, session, chat_data: dict, job_queue):
 
             elif text == USER_COMMAND_CO2:
                 chat_data['mode'] = 'co2'
-                text = 'CO2 panel'
-                # hour_panel(bot, update, text)
                 co2_statistic(bot, update, session, hour=1)
 
             elif text == USER_COMMAND_TEMPERATURE:
                 chat_data['mode'] = 'temp'
-                text = 'Temperature panel'
-                # hour_panel(bot, update, text)
                 temp_statistic(bot, update, session, hour=1)
 
             elif text == USER_COMMAND_HUMIDITY:
                 chat_data['mode'] = 'hum'
-                text = 'Humidity panel'
-                # hour_panel(bot, update, text)
                 hum_statistic(bot, update, session, hour=1)
 
             elif text == USER_COMMAND_1_HOUR:
@@ -95,10 +89,10 @@ def main():
     disp = updater.dispatcher
 
     # on different commands - answer in Telegram
-    disp.add_handler(CommandHandler("start", user_panel))
-
+    disp.add_handler(CommandHandler('start', user_panel))
+    disp.add_handler(CommandHandler('ping', ping))
     disp.add_handler(MessageHandler(
-        Filters.all, manage_all, pass_chat_data=True, pass_job_queue=True))
+        Filters.all, manage_all, pass_chat_data=True))
 
     # log all errors
     disp.add_error_handler(error)

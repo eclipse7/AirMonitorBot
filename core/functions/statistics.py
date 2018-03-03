@@ -8,7 +8,6 @@ from telegram import Update, Bot
 from core.functions.reply_markup import generate_hour_markup
 from core.texts import PLOT_X_LABEL_TEMP, PLOT_Y_LABEL_TEMP, PLOT_X_LABEL_HUM, PLOT_Y_LABEL_HUM
 from core.types import Device
-from core.utils import send_async
 
 
 def data(bot: Bot, update: Update, session):
@@ -21,12 +20,16 @@ def data(bot: Bot, update: Update, session):
         text += 'Temperature = ' + str(data.temp) + ' C \n'
         text += 'Humidity = ' + str(data.hum) + ' % \n'
         text += 'CO2 = ' + str(data.ppm) + ' ppm \n'
-        send_async(bot, chat_id=update.message.chat.id, text=text)
+        bot.sendMessage(update.message.chat.id, text)
 
 
 def temp_statistic(bot: Bot, update: Update, session, hour=1):
     device_data = session.query(Device).filter(datetime.now() - timedelta(
                     minutes=hour*60) < Device.date).order_by(Device.date).all()
+
+    if not device_data:
+        bot.sendMessage(update.message.chat.id, 'No data')
+        return
 
     plt.switch_backend('ps')
     plt.xlabel(PLOT_X_LABEL_TEMP)
@@ -70,6 +73,10 @@ def temp_statistic(bot: Bot, update: Update, session, hour=1):
 def hum_statistic(bot: Bot, update: Update, session, hour=1):
     device_data = session.query(Device).filter(datetime.now() - timedelta(
                     minutes=hour*60) < Device.date).order_by(Device.date).all()
+
+    if not device_data:
+        bot.sendMessage(update.message.chat.id, 'No data')
+        return
 
     plt.switch_backend('ps')
     plt.xlabel(PLOT_X_LABEL_HUM)
@@ -119,6 +126,10 @@ def hum_statistic(bot: Bot, update: Update, session, hour=1):
 def co2_statistic(bot: Bot, update: Update, session, hour=1):
     device_data = session.query(Device).filter(datetime.now() - timedelta(
                     minutes=hour*60) < Device.date).order_by(Device.date).all()
+
+    if not device_data:
+        bot.sendMessage(update.message.chat.id, 'No data')
+        return
 
     plt.switch_backend('ps')
     plt.xlabel(PLOT_X_LABEL_HUM)
