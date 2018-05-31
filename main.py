@@ -47,6 +47,11 @@ def manage_all(bot: Bot, update: Update, session, chat_data: dict):
         if text == USER_COMMAND_DATA:
             data(bot, update, session)
 
+        elif text == USER_COMMAND_BACK:
+            user_panel(bot, update)
+            chat_data['mode'] = ''
+            data(bot, update, session)
+
         elif text == USER_COMMAND_CO2:
             chat_data['mode'] = 'co2'
             co2_statistic(bot, update, session, hour=1)

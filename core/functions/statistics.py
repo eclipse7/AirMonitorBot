@@ -12,15 +12,17 @@ from core.types import Device
 
 def data(bot: Bot, update: Update, session):
     if update.message.chat.type == 'private':
-
         sub_query = session.query(Device.device_id, func.max(Device.date)).group_by(Device.device_id).subquery()
         data = session.query(Device).filter(tuple_(Device.device_id, Device.date).in_(sub_query)).first()
-
-        text = 'Date: ' + str(data.date) + '\n'
-        text += 'Temperature = ' + str(data.temp) + ' C \n'
-        text += 'Humidity = ' + str(data.hum) + ' % \n'
-        text += 'CO2 = ' + str(data.ppm) + ' ppm \n'
-        bot.sendMessage(update.message.chat.id, text)
+        if data and (datetime.now() - data.date) < timedelta(minutes=5):
+            text = ''
+            # text += 'Дата: ' + str(data.date) + '\n'
+            text += '🌱 CO₂: ' + str(data.ppm) + ' ppm \n'
+            text += '🌡 Температура: ' + str(data.temp) + ' C \n'
+            text += '🌊 Влажность: ' + str(round(data.hum)) + ' % \n'
+            bot.sendMessage(update.message.chat.id, text)
+        else:
+            bot.sendMessage(update.message.chat.id, 'No data')
 
 
 def temp_statistic(bot: Bot, update: Update, session, hour=1):
@@ -57,11 +59,11 @@ def temp_statistic(bot: Bot, update: Update, session, hour=1):
 
     text = 'Temperature '
     if hour == 1:
-        text += '60 minutes'
+        text += '1h'
     elif hour == 3:
-        text += '3 hours'
+        text += '3h'
     elif hour == 24:
-        text += '1 day'
+        text += '24h'
     text += ': ' + str(y[-1]) + ' C'
 
     with open(filename, 'rb') as file:
@@ -110,11 +112,11 @@ def hum_statistic(bot: Bot, update: Update, session, hour=1):
 
     text = 'Humidity '
     if hour == 1:
-        text += '60 minutes'
+        text += '1h'
     elif hour == 3:
-        text += '3 hours'
+        text += '3h'
     elif hour == 24:
-        text += '1 day'
+        text += '24h'
     text += ': ' + str(y[-1]) + ' %'
 
     with open(filename, 'rb') as file:
@@ -161,13 +163,13 @@ def co2_statistic(bot: Bot, update: Update, session, hour=1):
     with open(filename, 'wb') as file:
         plt.savefig(file, format='png')
 
-    text = 'CO2 '
+    text = 'CO₂ '
     if hour == 1:
-        text += '60 minutes'
+        text += '1h'
     elif hour == 3:
-        text += '3 hours'
+        text += '3h'
     elif hour == 24:
-        text += '1 day'
+        text += '24h'
     text += ': ' + str(y[-1]) + ' ppm'
 
     with open(filename, 'rb') as file:
