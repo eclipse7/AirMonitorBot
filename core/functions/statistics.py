@@ -4,9 +4,9 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from sqlalchemy import func, tuple_
 from telegram import Update, Bot
+from telegram.ext.dispatcher import run_async
 
-from core.functions.reply_markup import generate_hour_markup
-from core.texts import PLOT_X_LABEL_TEMP, PLOT_Y_LABEL_TEMP, PLOT_X_LABEL_HUM, PLOT_Y_LABEL_HUM
+from core.texts import PLOT_Y_LABEL_CO2, PLOT_Y_LABEL_HUM, PLOT_Y_LABEL_TEMP
 from core.types import Device
 
 
@@ -14,9 +14,10 @@ def data(bot: Bot, update: Update, session):
     if update.message.chat.type == 'private':
         sub_query = session.query(Device.device_id, func.max(Device.date)).group_by(Device.device_id).subquery()
         data = session.query(Device).filter(tuple_(Device.device_id, Device.date).in_(sub_query)).first()
-        if data and (datetime.now() - data.date) < timedelta(minutes=5):
+        if data:
             text = ''
-            # text += 'Дата: ' + str(data.date) + '\n'
+            if (datetime.now() - data.date) > timedelta(minutes=5):
+                text += 'Дата: ' + str(data.date) + '\n'
             text += '🌱 CO₂: ' + str(data.ppm) + ' ppm \n'
             text += '🌡 Температура: ' + str(data.temp) + ' C \n'
             text += '🌊 Влажность: ' + str(round(data.hum)) + ' % \n'
@@ -25,6 +26,7 @@ def data(bot: Bot, update: Update, session):
             bot.sendMessage(update.message.chat.id, 'No data')
 
 
+@run_async
 def temp_statistic(bot: Bot, update: Update, session, hour=1):
     device_data = session.query(Device).filter(datetime.now() - timedelta(
                     minutes=hour*60) < Device.date).order_by(Device.date).all()
@@ -34,7 +36,6 @@ def temp_statistic(bot: Bot, update: Update, session, hour=1):
         return
 
     plt.switch_backend('ps')
-    plt.xlabel(PLOT_X_LABEL_TEMP)
     plt.ylabel(PLOT_Y_LABEL_TEMP)
     x = [data.date for data in device_data]
     y = [data.temp for data in device_data]
@@ -57,21 +58,20 @@ def temp_statistic(bot: Bot, update: Update, session, hour=1):
     with open(filename, 'wb') as file:
         plt.savefig(file, format='png')
 
-    text = 'Temperature '
-    if hour == 1:
-        text += '1h'
-    elif hour == 3:
-        text += '3h'
-    elif hour == 24:
-        text += '24h'
-    text += ': ' + str(y[-1]) + ' C'
+    text = str(hour) + 'h\n'
+    text += 'Температура'
+    text += ': ' + str(y[-1]) + ' C\n'
+    text += '1 час: /temp_1\n'
+    text += '3 часа: /temp_3\n'
+    text += '24 часа: /temp_24\n'
 
     with open(filename, 'rb') as file:
-        bot.sendPhoto(update.message.chat.id, file, text, reply_markup=generate_hour_markup())
+        bot.sendPhoto(update.message.chat.id, file, text)
     plt.clf()
     os.remove(filename)
 
 
+@run_async
 def hum_statistic(bot: Bot, update: Update, session, hour=1):
     device_data = session.query(Device).filter(datetime.now() - timedelta(
                     minutes=hour*60) < Device.date).order_by(Device.date).all()
@@ -81,7 +81,6 @@ def hum_statistic(bot: Bot, update: Update, session, hour=1):
         return
 
     plt.switch_backend('ps')
-    plt.xlabel(PLOT_X_LABEL_HUM)
     plt.ylabel(PLOT_Y_LABEL_HUM)
     x = [data.date for data in device_data]
     y = [data.hum for data in device_data]
@@ -110,21 +109,20 @@ def hum_statistic(bot: Bot, update: Update, session, hour=1):
     with open(filename, 'wb') as file:
         plt.savefig(file, format='png')
 
-    text = 'Humidity '
-    if hour == 1:
-        text += '1h'
-    elif hour == 3:
-        text += '3h'
-    elif hour == 24:
-        text += '24h'
-    text += ': ' + str(y[-1]) + ' %'
+    text = str(hour) + 'h\n'
+    text += 'Влажность'
+    text += ': ' + str(round(y[-1])) + ' %\n'
+    text += '1 час: /hum_1\n'
+    text += '3 часа: /hum_3\n'
+    text += '24 часа: /hum_24\n'
 
     with open(filename, 'rb') as file:
-        bot.sendPhoto(update.message.chat.id, file, text, reply_markup=generate_hour_markup())
+        bot.sendPhoto(update.message.chat.id, file, text)
     plt.clf()
     os.remove(filename)
 
 
+@run_async
 def co2_statistic(bot: Bot, update: Update, session, hour=1):
     device_data = session.query(Device).filter(datetime.now() - timedelta(
                     minutes=hour*60) < Device.date).order_by(Device.date).all()
@@ -134,8 +132,7 @@ def co2_statistic(bot: Bot, update: Update, session, hour=1):
         return
 
     plt.switch_backend('ps')
-    plt.xlabel(PLOT_X_LABEL_HUM)
-    plt.ylabel("CO2")
+    plt.ylabel(PLOT_Y_LABEL_CO2)
     x = [data.date for data in device_data]
     y = [data.ppm for data in device_data]
 
@@ -163,16 +160,14 @@ def co2_statistic(bot: Bot, update: Update, session, hour=1):
     with open(filename, 'wb') as file:
         plt.savefig(file, format='png')
 
-    text = 'CO₂ '
-    if hour == 1:
-        text += '1h'
-    elif hour == 3:
-        text += '3h'
-    elif hour == 24:
-        text += '24h'
-    text += ': ' + str(y[-1]) + ' ppm'
+    text = str(hour) + 'h\n'
+    text += 'CO₂'
+    text += ': ' + str(y[-1]) + ' ppm \n'
+    text += '1 час: /co2_1\n'
+    text += '3 часа: /co2_3\n'
+    text += '24 часа: /co2_24\n'
 
     with open(filename, 'rb') as file:
-        bot.sendPhoto(update.message.chat.id, file, text, reply_markup=generate_hour_markup())
+        bot.sendPhoto(update.message.chat.id, file, text)
     plt.clf()
     os.remove(filename)

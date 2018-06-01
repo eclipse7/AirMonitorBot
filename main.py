@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-
 import logging
-
 import time
 
 from telegram import (
@@ -26,6 +23,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
+
 @run_async
 @user_allowed
 def manage_all(bot: Bot, update: Update, session, chat_data: dict):
@@ -47,53 +45,32 @@ def manage_all(bot: Bot, update: Update, session, chat_data: dict):
         if text == USER_COMMAND_DATA:
             data(bot, update, session)
 
-        elif text == USER_COMMAND_BACK:
-            user_panel(bot, update)
-            chat_data['mode'] = ''
-            data(bot, update, session)
-
         elif text == USER_COMMAND_CO2:
-            chat_data['mode'] = 'co2'
             co2_statistic(bot, update, session, hour=1)
 
         elif text == USER_COMMAND_TEMPERATURE:
-            chat_data['mode'] = 'temp'
             temp_statistic(bot, update, session, hour=1)
 
         elif text == USER_COMMAND_HUMIDITY:
-            chat_data['mode'] = 'hum'
             hum_statistic(bot, update, session, hour=1)
 
-        elif text == USER_COMMAND_1_HOUR:
-            mode = chat_data['mode']
-            if mode == 'co2':
-                co2_statistic(bot, update, session, hour=1)
-            elif mode == 'temp':
-                temp_statistic(bot, update, session, hour=1)
-            elif mode == 'hum':
-                hum_statistic(bot, update, session, hour=1)
+        elif text.startswith('/co2'):
+            arg = int(text.split('_')[1])
+            if arg:
+                co2_statistic(bot, update, session, hour=arg)
 
-        elif text == USER_COMMAND_3_HOUR:
-            mode = chat_data['mode']
-            if mode == 'co2':
-                co2_statistic(bot, update, session, hour=3)
-            elif mode == 'temp':
-                temp_statistic(bot, update, session, hour=3)
-            elif mode == 'hum':
-                hum_statistic(bot, update, session, hour=3)
+        elif text.startswith('/temp'):
+            arg = int(text.split('_')[1])
+            if arg:
+                temp_statistic(bot, update, session, hour=arg)
 
-        elif text == USER_COMMAND_24_HOUR:
-            mode = chat_data['mode']
-            if mode == 'co2':
-                co2_statistic(bot, update, session, hour=24)
-            elif mode == 'temp':
-                temp_statistic(bot, update, session, hour=24)
-            elif mode == 'hum':
-                hum_statistic(bot, update, session, hour=24)
+        elif text.startswith('/hum'):
+            arg = int(text.split('_')[1])
+            if arg:
+                hum_statistic(bot, update, session, hour=arg)
 
         else:
             user_panel(bot, update)
-            chat_data['mode'] = ''
 
 
 def main():
@@ -105,6 +82,7 @@ def main():
 
     # on different commands - answer in Telegram
     disp.add_handler(CommandHandler('start', user_panel))
+    disp.add_handler(CommandHandler('help', user_panel))
     disp.add_handler(CommandHandler('ping', ping))
     disp.add_handler(MessageHandler(
         Filters.all, manage_all, pass_chat_data=True))
