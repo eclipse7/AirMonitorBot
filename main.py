@@ -19,7 +19,6 @@ from bot.functions.statistics import data, temp_statistic, hum_statistic, co2_st
 from bot.types import user_allowed
 
 from web_app import app
-import threading
 
 logging.basicConfig(
     level=logging.WARNING,
@@ -102,7 +101,7 @@ def main():
                           cert='cert.pem',
                           webhook_url='https://%s:%s/%s' % (IP, PORT, TOKEN))
 
-    # Create Web server, receive data from sensor
+    # Create Web server, receive data from sensor (blocking function)
     app.run(debug=False, host='0.0.0.0')
 
     # updater.idle()
