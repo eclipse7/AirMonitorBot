@@ -10,7 +10,7 @@ from telegram.ext import (
 )
 from telegram.ext.dispatcher import run_async
 
-from config import TOKEN
+from config import IP, PORT, TOKEN
 from core.commands import *
 from core.functions.common import (
     ping, user_panel, error
@@ -91,7 +91,14 @@ def main():
     disp.add_error_handler(error)
 
     # Start the Bot
-    updater.start_polling(poll_interval=1)
+    # updater.start_polling(poll_interval=1)
+    updater.start_webhook(listen='0.0.0.0',
+                          port=PORT,
+                          url_path=TOKEN,
+                          key='private.key',
+                          cert='cert.pem',
+                          webhook_url='https://%s:%s/%s' % (IP, PORT, TOKEN))
+
     # app.run(port=API_PORT)
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since

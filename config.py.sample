@@ -2,4 +2,5 @@
 
 DB = 'mysql+pymysql://<username>:<password>@<host>/<dbname>?charset=utf8mb4'  # Строчка подключения к базе данных MySQL
 TOKEN = 'token'  # Токен телеграмбота (получается у @BotFather)
-
+IP = ''
+PORT = 8443
