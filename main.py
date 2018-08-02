@@ -11,12 +11,15 @@ from telegram.ext import (
 from telegram.ext.dispatcher import run_async
 
 from config import IP, PORT, TOKEN
-from core.commands import *
-from core.functions.common import (
+from bot.commands import *
+from bot.functions.common import (
     ping, user_panel, error
 )
-from core.functions.statistics import data, temp_statistic, hum_statistic, co2_statistic
-from core.types import user_allowed
+from bot.functions.statistics import data, temp_statistic, hum_statistic, co2_statistic
+from bot.types import user_allowed
+
+from web_app import app
+import threading
 
 logging.basicConfig(
     level=logging.WARNING,
@@ -99,11 +102,10 @@ def main():
                           cert='cert.pem',
                           webhook_url='https://%s:%s/%s' % (IP, PORT, TOKEN))
 
-    # app.run(port=API_PORT)
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
+    # Create Web server, receive data from sensor
+    app.run(debug=False, host='0.0.0.0')
+
+    # updater.idle()
 
 
 if __name__ == '__main__':

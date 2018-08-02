@@ -6,8 +6,8 @@ from sqlalchemy import func, tuple_
 from telegram import Update, Bot
 from telegram.ext.dispatcher import run_async
 
-from core.texts import PLOT_Y_LABEL_CO2, PLOT_Y_LABEL_HUM, PLOT_Y_LABEL_TEMP
-from core.types import Device
+from bot.texts import PLOT_Y_LABEL_CO2, PLOT_Y_LABEL_HUM, PLOT_Y_LABEL_TEMP
+from bot.types import Device
 
 
 def data(bot: Bot, update: Update, session):

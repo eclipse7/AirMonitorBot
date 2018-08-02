@@ -2,9 +2,9 @@ import logging
 
 from telegram import Update, Bot, ParseMode
 
-from core.functions.reply_markup import generate_user_markup
-from core.texts import *
-from core.utils import send_async
+from bot.functions.reply_markup import generate_user_markup
+from bot.texts import *
+from bot.utils import send_async
 
 LOGGER = logging.getLogger(__name__)
 MSG_PING = 'pong, @{}'

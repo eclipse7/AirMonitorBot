@@ -1,6 +1,6 @@
 from telegram import ReplyKeyboardMarkup, KeyboardButton
 
-from core.commands import *
+from bot.commands import *
 
 
 def generate_user_markup():
