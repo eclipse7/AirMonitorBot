@@ -21,12 +21,11 @@ def function_session():
 @app.route('/device', methods=['POST'])
 def new_data():
     content = request.get_json()
-    print(content)
+    # print(content)
 
     if content:
         try:
             session = Session()
-            # data = Data(device_id=1, date=datetime.now, temp=temp, hum=hum, ppm=ppm)
             device = Device()
             device.date = datetime.now()
             device.device_id = int(content['device_id'], 16)
