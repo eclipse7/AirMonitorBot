@@ -24,7 +24,7 @@ def data(bot: Bot, update: Update, session):
             text += '🌱 CO₂: ' + str(data.ppm) + ' ppm \n'
             text += '🌡 Температура: ' + str(data.temp) + ' C \n'
             text += '🌊 Влажность: ' + str(round(data.hum)) + ' % \n'
-            text += float(query_time)
+            text += str(query_time)
             bot.sendMessage(update.message.chat.id, text)
         else:
             bot.sendMessage(update.message.chat.id, 'No data')
@@ -173,7 +173,7 @@ def co2_statistic(bot: Bot, update: Update, session, hour=1):
     text += '1 час: /co2_1\n'
     text += '3 часа: /co2_3\n'
     text += '24 часа: /co2_24\n'
-    text += float(query_time)
+    text += str(query_time)
 
     with open(filename, 'rb') as file:
         bot.sendPhoto(update.message.chat.id, file, text)
