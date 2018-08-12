@@ -13,10 +13,8 @@ from bot.types import Device
 @run_async
 def data(bot: Bot, update: Update, session):
     if update.message.chat.type == 'private':
-        p1 = datetime.now()
         sub_query = session.query(Device.device_id, func.max(Device.date)).group_by(Device.device_id).subquery()
         data = session.query(Device).filter(tuple_(Device.device_id, Device.date).in_(sub_query)).first()
-        query_time = datetime.now() - p1
 
         if data:
             text = ''
@@ -25,7 +23,6 @@ def data(bot: Bot, update: Update, session):
             text += '🌱 CO₂: ' + str(data.ppm) + ' ppm \n'
             text += '🌡 Температура: ' + str(data.temp) + ' C \n'
             text += '🌊 Влажность: ' + str(round(data.hum)) + ' % \n'
-            text += str(query_time)
             bot.sendMessage(update.message.chat.id, text)
         else:
             bot.sendMessage(update.message.chat.id, 'No data')
@@ -129,10 +126,8 @@ def hum_statistic(bot: Bot, update: Update, session, hour=1):
 
 @run_async
 def co2_statistic(bot: Bot, update: Update, session, hour=1):
-    p1 = datetime.now()
     device_data = session.query(Device).filter(datetime.now() - timedelta(
                     minutes=hour*60) < Device.date).order_by(Device.date).all()
-    query_time = datetime.now() - p1
 
     if not device_data:
         bot.sendMessage(update.message.chat.id, 'No data')
@@ -167,14 +162,12 @@ def co2_statistic(bot: Bot, update: Update, session, hour=1):
     with open(filename, 'wb') as file:
         plt.savefig(file, format='png')
 
-
     text = str(hour) + 'h\n'
     text += 'CO₂'
     text += ': ' + str(y[-1]) + ' ppm \n'
     text += '1 час: /co2_1\n'
     text += '3 часа: /co2_3\n'
     text += '24 часа: /co2_24\n'
-    text += str(query_time)
 
     with open(filename, 'rb') as file:
         bot.sendPhoto(update.message.chat.id, file, text)
