@@ -8,7 +8,6 @@ from telegram.ext import (
     Updater, CommandHandler, MessageHandler,
     Filters
 )
-from telegram.ext.dispatcher import run_async
 
 from config import IP, PORT, TOKEN
 from bot.commands import *
@@ -26,7 +25,6 @@ logging.basicConfig(
 )
 
 
-@run_async
 @user_allowed
 def manage_all(bot: Bot, update: Update, session, chat_data: dict):
     if update.message.chat.type == 'private':

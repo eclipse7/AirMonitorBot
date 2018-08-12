@@ -10,6 +10,7 @@ from bot.texts import PLOT_Y_LABEL_CO2, PLOT_Y_LABEL_HUM, PLOT_Y_LABEL_TEMP
 from bot.types import Device
 
 
+@run_async
 def data(bot: Bot, update: Update, session):
     if update.message.chat.type == 'private':
         p1 = datetime.now()
