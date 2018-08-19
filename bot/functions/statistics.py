@@ -2,45 +2,45 @@ import os
 from datetime import datetime, timedelta
 
 import matplotlib.pyplot as plt
-from sqlalchemy import func, tuple_
 from telegram import Update, Bot
 from telegram.ext.dispatcher import run_async
 
 from bot.texts import PLOT_Y_LABEL_CO2, PLOT_Y_LABEL_HUM, PLOT_Y_LABEL_TEMP
-from bot.types import Device
+from bot.types import collection
 
 
 @run_async
-def data(bot: Bot, update: Update, session):
+def data(bot: Bot, update: Update):
     if update.message.chat.type == 'private':
-        sub_query = session.query(Device.device_id, func.max(Device.date)).group_by(Device.device_id).subquery()
-        data = session.query(Device).filter(tuple_(Device.device_id, Device.date).in_(sub_query)).first()
+        device_data = collection.find().sort("date", -1)
+        data = device_data[0]
 
         if data:
             text = ''
-            if (datetime.now() - data.date) > timedelta(minutes=5):
-                text += 'Дата: ' + str(data.date) + '\n'
-            text += '🌱 CO₂: ' + str(data.ppm) + ' ppm \n'
-            text += '🌡 Температура: ' + str(data.temp) + ' C \n'
-            text += '🌊 Влажность: ' + str(round(data.hum)) + ' % \n'
+            if (datetime.now() - data['date']) > timedelta(minutes=5):
+                text += 'Дата: ' + str(data['date']) + '\n'
+            text += '🌱 CO₂: ' + str(data['ppm']) + ' ppm \n'
+            text += '🌡 Температура: ' + str(data['temp']) + ' C \n'
+            text += '🌊 Влажность: ' + str(round(data['hum'])) + ' % \n'
             bot.sendMessage(update.message.chat.id, text)
         else:
             bot.sendMessage(update.message.chat.id, 'No data')
 
 
 @run_async
-def temp_statistic(bot: Bot, update: Update, session, hour=1):
-    device_data = session.query(Device).filter(datetime.now() - timedelta(
-                    minutes=hour*60) < Device.date).order_by(Device.date).all()
-
+def temp_statistic(bot: Bot, update: Update, hour=1):
+    device_data = collection.find({'date': {'$gt': datetime.now() - timedelta(minutes=hour*60)}}).sort("date", 1)
     if not device_data:
         bot.sendMessage(update.message.chat.id, 'No data')
         return
 
     plt.switch_backend('ps')
     plt.ylabel(PLOT_Y_LABEL_TEMP)
-    x = [data.date for data in device_data]
-    y = [data.temp for data in device_data]
+    x = []
+    y = []
+    for data in device_data:
+        x.append(data['date'])
+        y.append(data['temp'])
 
     x.append(datetime.now())
     y.append(y[-1])
@@ -74,18 +74,19 @@ def temp_statistic(bot: Bot, update: Update, session, hour=1):
 
 
 @run_async
-def hum_statistic(bot: Bot, update: Update, session, hour=1):
-    device_data = session.query(Device).filter(datetime.now() - timedelta(
-                    minutes=hour*60) < Device.date).order_by(Device.date).all()
-
+def hum_statistic(bot: Bot, update: Update, hour=1):
+    device_data = collection.find({'date': {'$gt': datetime.now() - timedelta(minutes=hour * 60)}}).sort("date", 1)
     if not device_data:
         bot.sendMessage(update.message.chat.id, 'No data')
         return
 
     plt.switch_backend('ps')
     plt.ylabel(PLOT_Y_LABEL_HUM)
-    x = [data.date for data in device_data]
-    y = [data.hum for data in device_data]
+    x = []
+    y = []
+    for data in device_data:
+        x.append(data['date'])
+        y.append(data['hum'])
 
     x.append(datetime.now())
     y.append(y[-1])
@@ -125,18 +126,19 @@ def hum_statistic(bot: Bot, update: Update, session, hour=1):
 
 
 @run_async
-def co2_statistic(bot: Bot, update: Update, session, hour=1):
-    device_data = session.query(Device).filter(datetime.now() - timedelta(
-                    minutes=hour*60) < Device.date).order_by(Device.date).all()
-
+def co2_statistic(bot: Bot, update: Update, hour=1):
+    device_data = collection.find({'date': {'$gt': datetime.now() - timedelta(minutes=hour * 60)}}).sort("date", 1)
     if not device_data:
         bot.sendMessage(update.message.chat.id, 'No data')
         return
 
     plt.switch_backend('ps')
     plt.ylabel(PLOT_Y_LABEL_CO2)
-    x = [data.date for data in device_data]
-    y = [data.ppm for data in device_data]
+    x = []
+    y = []
+    for data in device_data:
+        x.append(data['date'])
+        y.append(data['ppm'])
 
     x.append(datetime.now())
     y.append(y[-1])

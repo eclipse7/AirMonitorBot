@@ -1,11 +1,11 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import flask
 from flask import request
 from flask import session as flask_session
 
 from web_app import app
-from web_app.types import *
+from web_app.types import collection
 from config import APP_SECRET_KEY
 
 app.secret_key = APP_SECRET_KEY
@@ -21,21 +21,17 @@ def function_session():
 @app.route('/device', methods=['POST'])
 def new_data():
     content = request.get_json()
-    # print(content)
-
     if content:
         try:
-            session = Session()
-            device = Device()
-            device.date = datetime.now()
-            device.device_id = int(content['device_id'], 16)
-            device.temp = float(content['temp'])
-            device.hum = float(content['hum'])
-            device.ppm = int(content['ppm'])
-            session.add(device)
-            session.commit()
+            data = {
+                'date': datetime.now(),
+                'device_id': int(content['device_id'], 16),
+                'temp': float(content['temp']),
+                'hum': float(content['hum']),
+                'ppm': int(content['ppm'])
+            }
+            response = collection.insert_one(data).inserted_id
             return flask.Response(status=200)
 
         except Exception:
-            Session.rollback()
             return flask.Response(status=400)

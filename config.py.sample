@@ -1,6 +1,8 @@
 # Содержимое этого файла необходимо скопировать в config.py и изменить под себя
 
-DB = 'mysql+pymysql://<username>:<password>@<host>/<dbname>?charset=utf8mb4'  # Строчка подключения к базе данных MySQL
+DB_PORT = 27017
+DB_NAME = 'db_name'
+DB_COLLECTION_NAME = 'collection_name'
 
 TOKEN = 'token'  # Токен телеграмбота (получается у @BotFather)
 IP = ''
