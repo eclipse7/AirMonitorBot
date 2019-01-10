@@ -139,7 +139,7 @@ def co2_statistic(bot: Bot, update: Update, hour=1):
     t = time.time()
 
     plt.switch_backend('ps')
-    plt.figure(figsize=(13, 8))
+    plt.figure(figsize=(8, 5.65))
     plt.ylabel(PLOT_Y_LABEL_CO2)
     x = []
     y = []
