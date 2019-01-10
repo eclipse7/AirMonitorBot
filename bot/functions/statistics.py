@@ -62,6 +62,7 @@ def temp_statistic(bot: Bot, update: Update, hour=1):
         ymax = y_center + scale / 2
         ymin = y_center - scale / 2
     plt.ylim(ymin, ymax)
+    plt.fill_between(x, ymin, y, alpha=0.7, interpolate=True)
 
     plt.gcf().autofmt_xdate()
     filename = str(datetime.now()).replace(':', '').replace(' ', '').replace('-', '') + '.png'
@@ -117,6 +118,7 @@ def hum_statistic(bot: Bot, update: Update, hour=1):
             ymin = -5
             ymax = ymin + scale
     plt.ylim(ymin, ymax)
+    plt.fill_between(x, ymin, y, alpha=0.7, interpolate=True)
 
     plt.gcf().autofmt_xdate()
     filename = str(datetime.now()).replace(':', '').replace(' ', '').replace('-', '') + '.png'
