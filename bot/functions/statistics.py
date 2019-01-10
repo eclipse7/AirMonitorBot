@@ -10,7 +10,7 @@ from bot.types import collection
 
 import time
 
-figsize = (10, 7.07)
+figsize = (7, 4.95)
 
 @run_async
 def data(bot: Bot, update: Update):
