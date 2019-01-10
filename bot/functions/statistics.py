@@ -139,6 +139,7 @@ def co2_statistic(bot: Bot, update: Update, hour=1):
     t = time.time()
 
     plt.switch_backend('ps')
+    plt.figure(figsize=(13, 8))
     plt.ylabel(PLOT_Y_LABEL_CO2)
     x = []
     y = []
@@ -165,6 +166,7 @@ def co2_statistic(bot: Bot, update: Update, hour=1):
             ymin = 380
             ymax = ymin + scale
     plt.ylim(ymin, ymax)
+    plt.fill_between(x, ymin, y, alpha=0.7, interpolate=True)
 
     plt.gcf().autofmt_xdate()
     filename = str(datetime.now()).replace(':', '').replace(' ', '').replace('-', '') + '.png'
