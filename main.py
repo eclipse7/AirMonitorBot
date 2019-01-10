@@ -99,7 +99,7 @@ def main():
 
     # Create Web server, receive data from sensor (blocking function)
     print('Start web server')
-    app.run(debug=False, host='0.0.0.0')
+    app.run(debug=False, host='0.0.0.0', port=1883)
 
     # updater.idle()
 

@@ -45,6 +45,7 @@ def temp_statistic(bot: Bot, update: Update, hour=1):
     x.append(datetime.now())
     y.append(y[-1])
     plt.plot(x, y)
+    plt.grid(True)
 
     ymin, ymax = plt.ylim()  # return the current ylim
     y_delta = ymax - ymin
@@ -91,6 +92,7 @@ def hum_statistic(bot: Bot, update: Update, hour=1):
     x.append(datetime.now())
     y.append(y[-1])
     plt.plot(x, y)
+    plt.grid(True)
 
     ymin, ymax = plt.ylim()  # return the current ylim
     y_delta = ymax - ymin
@@ -143,6 +145,7 @@ def co2_statistic(bot: Bot, update: Update, hour=1):
     x.append(datetime.now())
     y.append(y[-1])
     plt.plot(x, y)
+    plt.grid(True)
 
     ymin, ymax = plt.ylim()  # return the current ylim
     y_delta = ymax - ymin
