@@ -143,8 +143,6 @@ def co2_statistic(bot: Bot, update: Update, hour=1):
         bot.sendMessage(update.message.chat.id, 'No data')
         return
 
-    t = time.time()
-
     plt.style.use(style)
     plt.switch_backend('ps')
     plt.figure(figsize=figsize)
@@ -181,8 +179,7 @@ def co2_statistic(bot: Bot, update: Update, hour=1):
     with open(filename, 'wb') as file:
         plt.savefig(file, format='png')
 
-    t = time.time() - t
-    text = str(t) + ' ' + str(hour) + 'h\n'
+    text = str(hour) + 'h\n'
     text += 'CO₂'
     text += ': ' + str(y[-1]) + ' ppm \n'
     text += '1 час: /co2_1\n'
