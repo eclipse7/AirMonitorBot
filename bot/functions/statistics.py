@@ -42,7 +42,7 @@ def temp_statistic(bot: Bot, update: Update, hour=1):
     plt.style.use(style)
     plt.switch_backend('ps')
     plt.figure(figsize=figsize)
-    plt.ylabel(PLOT_Y_LABEL_TEMP)
+    plt.title(PLOT_Y_LABEL_TEMP)
     x = []
     y = []
     for data in device_data:
@@ -91,7 +91,7 @@ def hum_statistic(bot: Bot, update: Update, hour=1):
     plt.style.use(style)
     plt.switch_backend('ps')
     plt.figure(figsize=figsize)
-    plt.ylabel(PLOT_Y_LABEL_HUM)
+    plt.title(PLOT_Y_LABEL_HUM)
     x = []
     y = []
     for data in device_data:
@@ -148,7 +148,7 @@ def co2_statistic(bot: Bot, update: Update, hour=1):
     plt.style.use(style)
     plt.switch_backend('ps')
     plt.figure(figsize=figsize)
-    plt.ylabel(PLOT_Y_LABEL_CO2)
+    plt.title(PLOT_Y_LABEL_CO2)
     x = []
     y = []
     for data in device_data:
