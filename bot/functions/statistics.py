@@ -8,6 +8,8 @@ from telegram.ext.dispatcher import run_async
 from bot.texts import PLOT_Y_LABEL_CO2, PLOT_Y_LABEL_HUM, PLOT_Y_LABEL_TEMP
 from bot.types import collection
 
+import time
+
 
 @run_async
 def data(bot: Bot, update: Update):
@@ -132,6 +134,8 @@ def co2_statistic(bot: Bot, update: Update, hour=1):
         bot.sendMessage(update.message.chat.id, 'No data')
         return
 
+    t = time.time()
+
     plt.switch_backend('ps')
     plt.ylabel(PLOT_Y_LABEL_CO2)
     x = []
@@ -164,7 +168,8 @@ def co2_statistic(bot: Bot, update: Update, hour=1):
     with open(filename, 'wb') as file:
         plt.savefig(file, format='png')
 
-    text = str(hour) + 'h\n'
+    t = time.time() - t
+    text = str(t) + ' ' + str(hour) + 'h\n'
     text += 'CO₂'
     text += ': ' + str(y[-1]) + ' ppm \n'
     text += '1 час: /co2_1\n'
