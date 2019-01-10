@@ -11,6 +11,7 @@ from bot.types import collection
 import time
 
 figsize = (8, 5.65)
+style = 'bmh'
 
 @run_async
 def data(bot: Bot, update: Update):
@@ -37,6 +38,7 @@ def temp_statistic(bot: Bot, update: Update, hour=1):
         bot.sendMessage(update.message.chat.id, 'No data')
         return
 
+    plt.style.use(style)
     plt.switch_backend('ps')
     plt.figure(figsize=figsize)
     plt.ylabel(PLOT_Y_LABEL_TEMP)
@@ -85,6 +87,7 @@ def hum_statistic(bot: Bot, update: Update, hour=1):
         bot.sendMessage(update.message.chat.id, 'No data')
         return
 
+    plt.style.use(style)
     plt.switch_backend('ps')
     plt.figure(figsize=figsize)
     plt.ylabel(PLOT_Y_LABEL_HUM)
@@ -140,7 +143,8 @@ def co2_statistic(bot: Bot, update: Update, hour=1):
         return
 
     t = time.time()
-
+    
+    plt.style.use(style)
     plt.switch_backend('ps')
     plt.figure(figsize=figsize)
     plt.ylabel(PLOT_Y_LABEL_CO2)
