@@ -30,6 +30,7 @@ def new_data():
                 'hum': float(content['hum']),
                 'ppm': int(content['ppm'])
             }
+            print(data)
             response = collection.insert_one(data).inserted_id
             return flask.Response(status=200)
 
