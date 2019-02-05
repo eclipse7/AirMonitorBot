@@ -24,11 +24,13 @@ def new_data():
     if content:
         try:
             data = {
-                'date': datetime.now(),
                 'device_id': int(content['device_id'], 16),
+                'date': datetime.now(),
                 'temp': float(content['temp']),
                 'hum': float(content['hum']),
-                'ppm': int(content['ppm'])
+                'ppm': int(content['ppm']),
+                'pressure': float(content['pressure']),
+                'bmp180_temp': float(content['bmp180_temp'])
             }
             print(data)
             response = collection.insert_one(data).inserted_id
