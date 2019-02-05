@@ -77,8 +77,10 @@ def temp_statistic(bot: Bot, update: Update, hour=1):
         plt.savefig(file, format='png')
 
     text = str(hour) + 'h\n'
-    text += 'Температура'
+    text += '🌡 Температура #1: '
     text += ': ' + str(y[-1]) + ' C\n'
+    text += '🌡 Температура #2: '
+    text += ': ' + str(z[-1]) + ' C\n'
     text += '1 час: /temp_1\n'
     text += '3 часа: /temp_3\n'
     text += '24 часа: /temp_24\n'
@@ -133,7 +135,7 @@ def hum_statistic(bot: Bot, update: Update, hour=1):
         plt.savefig(file, format='png')
 
     text = str(hour) + 'h\n'
-    text += 'Влажность'
+    text += '🌊 Влажность: '
     text += ': ' + str(round(y[-1])) + ' %\n'
     text += '1 час: /hum_1\n'
     text += '3 часа: /hum_3\n'
@@ -189,7 +191,7 @@ def co2_statistic(bot: Bot, update: Update, hour=1):
         plt.savefig(file, format='png')
 
     text = str(hour) + 'h\n'
-    text += 'CO₂'
+    text += '🌱 CO₂: '
     text += ': ' + str(y[-1]) + ' ppm \n'
     text += '1 час: /co2_1\n'
     text += '3 часа: /co2_3\n'
@@ -247,7 +249,7 @@ def pressure_statistic(bot: Bot, update: Update, hour=1):
         plt.savefig(file, format='png')
 
     text = str(hour) + 'h\n'
-    text += 'Pressure'
+    text += '🏔 Давление: '
     text += ': ' + str(round(y[-1])) + ' mmHg \n'
     text += '1 час: /p_1\n'
     text += '3 часа: /p_3\n'
