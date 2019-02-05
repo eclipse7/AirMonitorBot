@@ -224,8 +224,20 @@ def pressure_statistic(bot: Bot, update: Update, hour=1):
     plt.plot(x, y)
     plt.grid(True)
 
-    ymin = 710
-    ymax = 800
+    ymin, ymax = plt.ylim()  # return the current ylim
+    y_delta = ymax - ymin
+    y_center = (ymax + ymin) / 2
+    scale = 20
+    if abs(y_delta) < scale:
+        ymax = y_center + scale / 2
+        ymin = y_center - scale / 2
+        if ymax > 5000:
+            ymax = 5000
+            ymin = ymax - scale
+        if ymin < 380:
+            ymin = 380
+            ymax = ymin + scale
+
     plt.ylim(ymin, ymax)
     plt.fill_between(x, ymin, y, alpha=0.7, interpolate=True)
 
@@ -236,7 +248,7 @@ def pressure_statistic(bot: Bot, update: Update, hour=1):
 
     text = str(hour) + 'h\n'
     text += 'Pressure'
-    text += ': ' + str(y[-1]) + ' mmHg \n'
+    text += ': ' + str(round(y[-1])) + ' mmHg \n'
     text += '1 час: /p_1\n'
     text += '3 часа: /p_3\n'
     text += '24 часа: /p_24\n'
