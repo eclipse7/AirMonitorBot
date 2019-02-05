@@ -13,7 +13,7 @@ from bot.commands import *
 from bot.functions.common import (
     ping, user_panel, error
 )
-from bot.functions.statistics import data, temp_statistic, hum_statistic, co2_statistic
+from bot.functions.statistics import data, temp_statistic, hum_statistic, co2_statistic, pressure_statistic
 from config import TOKEN, IP, PORT
 from web_app import app
 
@@ -51,6 +51,9 @@ def manage_all(bot: Bot, update: Update, chat_data: dict):
         elif text == USER_COMMAND_HUMIDITY:
             hum_statistic(bot, update, hour=1)
 
+        elif text == USER_COMMAND_PRESSURE:
+            pressure_statistic(bot, update, hour=1)
+
         elif text.startswith('/co2'):
             arg = int(text.split('_')[1])
             if arg:
@@ -65,6 +68,11 @@ def manage_all(bot: Bot, update: Update, chat_data: dict):
             arg = int(text.split('_')[1])
             if arg:
                 hum_statistic(bot, update, hour=arg)
+
+        elif text.startswith('/p'):
+            arg = int(text.split('_')[1])
+            if arg:
+                pressure_statistic(bot, update, hour=arg)
 
         else:
             user_panel(bot, update)

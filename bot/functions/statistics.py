@@ -5,10 +5,9 @@ import matplotlib.pyplot as plt
 from telegram import Update, Bot
 from telegram.ext.dispatcher import run_async
 
-from bot.texts import PLOT_Y_LABEL_CO2, PLOT_Y_LABEL_HUM, PLOT_Y_LABEL_TEMP
+from bot.texts import PLOT_Y_LABEL_CO2, PLOT_Y_LABEL_HUM, PLOT_Y_LABEL_TEMP, PLOT_Y_LABEL_PRESSURE
 from bot.types import collection
 
-import time
 
 figsize = (8, 5.65)
 # style = 'bmh'
@@ -189,6 +188,51 @@ def co2_statistic(bot: Bot, update: Update, hour=1):
     text += '1 час: /co2_1\n'
     text += '3 часа: /co2_3\n'
     text += '24 часа: /co2_24\n'
+
+    with open(filename, 'rb') as file:
+        bot.sendPhoto(update.message.chat.id, file, text)
+    plt.clf()
+    os.remove(filename)
+
+
+@run_async
+def pressure_statistic(bot: Bot, update: Update, hour=1):
+    device_data = collection.find({'date': {'$gt': datetime.now() - timedelta(minutes=hour * 60)}}).sort("date", 1)
+    if not device_data:
+        bot.sendMessage(update.message.chat.id, 'No data')
+        return
+
+    plt.style.use(style)
+    plt.switch_backend('ps')
+    plt.figure(figsize=figsize)
+    plt.title(PLOT_Y_LABEL_PRESSURE)
+    x = []
+    y = []
+    for data in device_data:
+        x.append(data['date'])
+        y.append(data['pressure'])
+
+    x.append(datetime.now())
+    y.append(y[-1])
+    plt.plot(x, y)
+    plt.grid(True)
+
+    ymin = 710
+    ymax = 800
+    plt.ylim(ymin, ymax)
+    plt.fill_between(x, ymin, y, alpha=0.7, interpolate=True)
+
+    plt.gcf().autofmt_xdate()
+    filename = str(datetime.now()).replace(':', '').replace(' ', '').replace('-', '') + '.png'
+    with open(filename, 'wb') as file:
+        plt.savefig(file, format='png')
+
+    text = str(hour) + 'h\n'
+    text += 'Pressure'
+    text += ': ' + str(y[-1]) + ' mmHg \n'
+    text += '1 час: /p_1\n'
+    text += '3 часа: /p_3\n'
+    text += '24 часа: /p_24\n'
 
     with open(filename, 'rb') as file:
         bot.sendPhoto(update.message.chat.id, file, text)
