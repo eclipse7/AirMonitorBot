@@ -27,7 +27,7 @@ def data(bot: Bot, update: Update):
             text += '🌡 Температура #1: ' + str(data['temp']) + ' C \n'
             text += '🌡 Температура #2: ' + str(data['bmp180_temp']) + ' C \n'
             text += '🌊 Влажность: ' + str(round(data['hum'])) + ' % \n'
-            text += '🏔 Давление: ' + str(round(data['pressure'])) + ' mmHg \n'
+            text += '🏔 Aтм. Давление: ' + str(round(data['pressure'])) + ' mmHg \n'
             bot.sendMessage(update.message.chat.id, text)
         else:
             bot.sendMessage(update.message.chat.id, 'No data')
@@ -249,7 +249,7 @@ def pressure_statistic(bot: Bot, update: Update, hour=1):
         plt.savefig(file, format='png')
 
     text = str(hour) + 'h\n'
-    text += '🏔 Давление: '
+    text += '🏔 Aтм. Давление: '
     text += str(round(y[-1])) + ' mmHg \n'
     text += '1 час: /p_1\n'
     text += '3 часа: /p_3\n'
