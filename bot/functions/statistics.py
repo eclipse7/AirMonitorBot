@@ -209,7 +209,7 @@ def pressure_statistic(bot: Bot, update: Update, hour=1):
     x = []
     y = []
     for data in device_data:
-        if data['pressure']:
+        if data.get('pressure'):
             x.append(data['date'])
             y.append(data['pressure'])
 
