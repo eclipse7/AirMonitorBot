@@ -46,13 +46,19 @@ def temp_statistic(bot: Bot, update: Update, hour=1):
     plt.title(PLOT_Y_LABEL_TEMP)
     x = []
     y = []
+    z = []
     for data in device_data:
-        x.append(data['date'])
-        y.append(data['temp'])
+        if data.get('bmp180_temp') and data.get('temp'):
+            x.append(data['date'])
+            y.append(data['temp'])
+            z.append(data['bmp180_temp'])
 
     x.append(datetime.now())
     y.append(y[-1])
+    z.append(z[-1])
+
     plt.plot(x, y)
+    plt.plot(x, z)
     plt.grid(True)
 
     ymin, ymax = plt.ylim()  # return the current ylim
@@ -63,7 +69,7 @@ def temp_statistic(bot: Bot, update: Update, hour=1):
         ymax = y_center + scale / 2
         ymin = y_center - scale / 2
     plt.ylim(ymin, ymax)
-    plt.fill_between(x, ymin, y, alpha=0.7, interpolate=True)
+    # plt.fill_between(x, ymin, y, alpha=0.7, interpolate=True)
 
     plt.gcf().autofmt_xdate()
     filename = str(datetime.now()).replace(':', '').replace(' ', '').replace('-', '') + '.png'
