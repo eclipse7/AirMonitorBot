@@ -24,10 +24,10 @@ def data(bot: Bot, update: Update):
             if (datetime.now() - data['date']) > timedelta(minutes=5):
                 text += 'Дата: ' + str(data['date']) + '\n'
             text += '🌱 CO₂: ' + str(data['ppm']) + ' ppm \n'
-            text += '🌡 Температура: ' + str(data['temp']) + ' C \n'
+            text += '🌡 Температура #1: ' + str(data['temp']) + ' C \n'
+            text += '🌡 Температура #2: ' + str(data['bmp180_temp']) + ' C \n'
             text += '🌊 Влажность: ' + str(round(data['hum'])) + ' % \n'
             text += '🏔 Давление: ' + str(round(data['pressure'])) + ' mmHg \n'
-            text += '🌡 Температура BMP180: ' + str(data['bmp180_temp']) + ' C \n'
             bot.sendMessage(update.message.chat.id, text)
         else:
             bot.sendMessage(update.message.chat.id, 'No data')
