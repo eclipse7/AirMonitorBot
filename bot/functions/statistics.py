@@ -229,16 +229,10 @@ def pressure_statistic(bot: Bot, update: Update, hour=1):
     ymin, ymax = plt.ylim()  # return the current ylim
     y_delta = ymax - ymin
     y_center = (ymax + ymin) / 2
-    scale = 20
+    scale = 8
     if abs(y_delta) < scale:
         ymax = y_center + scale / 2
         ymin = y_center - scale / 2
-        if ymax > 5000:
-            ymax = 5000
-            ymin = ymax - scale
-        if ymin < 380:
-            ymin = 380
-            ymax = ymin + scale
 
     plt.ylim(ymin, ymax)
     plt.fill_between(x, ymin, y, alpha=0.7, interpolate=True)
