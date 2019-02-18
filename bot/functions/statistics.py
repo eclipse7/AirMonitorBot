@@ -24,8 +24,7 @@ def data(bot: Bot, update: Update):
             if (datetime.now() - data['date']) > timedelta(minutes=5):
                 text += 'Дата: ' + str(data['date']) + '\n'
             text += '🌱 CO₂: ' + str(data['ppm']) + ' ppm \n'
-            text += '🌡 Температура #1: ' + str(data['temp']) + ' C \n'
-            text += '🌡 Температура #2: ' + str(data['bmp180_temp']) + ' C \n'
+            text += '🌡 Температура: ' + str(data['bmp180_temp']) + ' C \n'
             text += '🌊 Влажность: ' + str(round(data['hum'])) + ' % \n'
             text += '🏔 Aтм. Давление: ' + str(round(data['pressure'])) + ' mmHg \n'
             bot.sendMessage(update.message.chat.id, text)
@@ -46,19 +45,15 @@ def temp_statistic(bot: Bot, update: Update, hour=1):
     plt.title(PLOT_Y_LABEL_TEMP)
     x = []
     y = []
-    z = []
     for data in device_data:
-        if data.get('bmp180_temp') and data.get('temp'):
+        if data.get('bmp180_temp'):
             x.append(data['date'])
-            y.append(data['temp'])
-            z.append(data['bmp180_temp'])
+            y.append(data['bmp180_temp'])
 
     x.append(datetime.now())
     y.append(y[-1])
-    z.append(z[-1])
 
     plt.plot(x, y)
-    plt.plot(x, z)
     plt.grid(True)
 
     ymin, ymax = plt.ylim()  # return the current ylim
@@ -69,7 +64,7 @@ def temp_statistic(bot: Bot, update: Update, hour=1):
         ymax = y_center + scale / 2
         ymin = y_center - scale / 2
     plt.ylim(ymin, ymax)
-    # plt.fill_between(x, ymin, y, alpha=0.7, interpolate=True)
+    plt.fill_between(x, ymin, y, alpha=0.7, interpolate=True)
 
     plt.gcf().autofmt_xdate()
     filename = str(datetime.now()).replace(':', '').replace(' ', '').replace('-', '') + '.png'
@@ -77,10 +72,8 @@ def temp_statistic(bot: Bot, update: Update, hour=1):
         plt.savefig(file, format='png')
 
     text = str(hour) + 'h\n'
-    text += '🌡 Температура #1: '
+    text += '🌡 Температура: '
     text += str(y[-1]) + ' C\n'
-    text += '🌡 Температура #2: '
-    text += str(z[-1]) + ' C\n'
     text += '1 час: /temp_1\n'
     text += '3 часа: /temp_3\n'
     text += '24 часа: /temp_24\n'
