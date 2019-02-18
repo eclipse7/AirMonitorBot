@@ -52,7 +52,7 @@ def manage_all(bot: Bot, update: Update, chat_data: dict):
             hum_statistic(bot, update, hour=1)
 
         elif text == USER_COMMAND_PRESSURE:
-            pressure_statistic(bot, update, hour=1)
+            pressure_statistic(bot, update, hour=3)
 
         elif text.startswith('/co2'):
             arg = int(text.split('_')[1])

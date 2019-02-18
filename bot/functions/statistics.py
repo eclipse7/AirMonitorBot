@@ -245,9 +245,9 @@ def pressure_statistic(bot: Bot, update: Update, hour=1):
     text = str(hour) + 'h\n'
     text += '🏔 Aтм. Давление: '
     text += str(round(y[-1])) + ' mmHg \n'
-    text += '1 час: /p_1\n'
     text += '3 часа: /p_3\n'
-    text += '24 часа: /p_24\n'
+    text += '1 день: /p_24\n'
+    text += '7 дней: /p_168\n'
 
     with open(filename, 'rb') as file:
         bot.sendPhoto(update.message.chat.id, file, text)
