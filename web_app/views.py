@@ -30,7 +30,8 @@ def new_data():
                 'hum': float(content['hum']),
                 'ppm': int(content['ppm']),
                 'pressure': float(content['pressure']),
-                'bmp180_temp': float(content['bmp180_temp'])
+                'bmp180_temp': float(content['bmp180_temp']),
+                'gas_res': float(content['gas_res'])
             }
             print(data)
             response = collection.insert_one(data).inserted_id
