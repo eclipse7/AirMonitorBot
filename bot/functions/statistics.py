@@ -220,7 +220,7 @@ def gas_statistic(bot: Bot, update: Update, hour=1):
     plt.plot(x, y)
     plt.grid(True)
 
-    plt.ylim(0, 70)
+    plt.ylim(0, 100)
     plt.fill_between(x, 0, y, alpha=0.7, interpolate=True)
 
     plt.gcf().autofmt_xdate()
