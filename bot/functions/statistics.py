@@ -211,8 +211,9 @@ def gas_statistic(bot: Bot, update: Update, hour=1):
     x = []
     y = []
     for data in device_data:
-        x.append(data['date'])
-        y.append(data['gas_res'])
+        if data.get('gas_res'):
+            x.append(data['date'])
+            y.append(data['gas_res'])
 
     x.append(datetime.now())
     y.append(y[-1])
