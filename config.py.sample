@@ -1,8 +1,9 @@
 # Содержимое этого файла необходимо скопировать в config.py и изменить под себя
 
+DB_HOST = 'mongodb'
 DB_PORT = 27017
-DB_NAME = 'db_name'
-DB_COLLECTION_NAME = 'collection_name'
+DB_NAME = 'air_monitor'
+DB_COLLECTION_NAME = 'air_data'
 
 TOKEN = 'token'  # Токен телеграмбота (получается у @BotFather)
 IP = ''

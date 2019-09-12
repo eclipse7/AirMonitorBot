@@ -105,13 +105,13 @@ def main():
 
     # Start the Bot
     print('Start bot')
-    # updater.start_polling(poll_interval=1)
-    updater.start_webhook(listen='0.0.0.0',
-                          port=PORT,
-                          url_path=TOKEN,
-                          key='private.key',
-                          cert='cert.pem',
-                          webhook_url='https://%s:%s/%s' % (IP, PORT, TOKEN))
+    updater.start_polling(poll_interval=1)
+    #updater.start_webhook(listen='0.0.0.0',
+    #                      port=PORT,
+    #                      url_path=TOKEN,
+    #                      key='private.key',
+    #                      cert='cert.pem',
+    #                      webhook_url='https://%s:%s/%s' % (IP, PORT, TOKEN))
 
     # Create Web server, receive data from sensor (blocking function)
     print('Start web server')

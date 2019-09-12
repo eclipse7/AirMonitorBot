@@ -1,0 +1,18 @@
+version: '2'
+services:
+  mongodb:
+    image: mongo:latest
+    restart: always
+  bot:
+    build: ./
+    restart: always
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./:/app
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+    command: python main.py
+
