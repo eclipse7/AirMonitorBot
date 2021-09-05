@@ -9,15 +9,12 @@ from telegram.ext import (
     Filters
 )
 
-from config import IP, PORT, TOKEN
 from bot.commands import *
 from bot.functions.common import (
     ping, user_panel, error
 )
-from bot.functions.statistics import data, temp_statistic, hum_statistic, co2_statistic
-from bot.types import user_allowed
-
-from web_app import app
+from bot.functions.statistics import data, temp_statistic, hum_statistic, co2_statistic, pressure_statistic
+from config import TOKEN, IP, PORT
 
 logging.basicConfig(
     level=logging.WARNING,
@@ -25,8 +22,7 @@ logging.basicConfig(
 )
 
 
-@user_allowed
-def manage_all(bot: Bot, update: Update, session, chat_data: dict):
+def manage_all(bot: Bot, update: Update, chat_data: dict):
     if update.message.chat.type == 'private':
         text = update.message.text
         if not text:
@@ -43,31 +39,39 @@ def manage_all(bot: Bot, update: Update, session, chat_data: dict):
         chat_data['last_text'] = text
 
         if text == USER_COMMAND_DATA:
-            data(bot, update, session)
+            data(bot, update)
 
         elif text == USER_COMMAND_CO2:
-            co2_statistic(bot, update, session, hour=1)
+            co2_statistic(bot, update, hour=1)
 
         elif text == USER_COMMAND_TEMPERATURE:
-            temp_statistic(bot, update, session, hour=1)
+            temp_statistic(bot, update, hour=1)
 
         elif text == USER_COMMAND_HUMIDITY:
-            hum_statistic(bot, update, session, hour=1)
+            hum_statistic(bot, update, hour=1)
+
+        elif text == USER_COMMAND_PRESSURE:
+            pressure_statistic(bot, update, hour=3)
 
         elif text.startswith('/co2'):
             arg = int(text.split('_')[1])
             if arg:
-                co2_statistic(bot, update, session, hour=arg)
+                co2_statistic(bot, update, hour=arg)
 
         elif text.startswith('/temp'):
             arg = int(text.split('_')[1])
             if arg:
-                temp_statistic(bot, update, session, hour=arg)
+                temp_statistic(bot, update, hour=arg)
 
         elif text.startswith('/hum'):
             arg = int(text.split('_')[1])
             if arg:
-                hum_statistic(bot, update, session, hour=arg)
+                hum_statistic(bot, update, hour=arg)
+
+        elif text.startswith('/p'):
+            arg = int(text.split('_')[1])
+            if arg:
+                pressure_statistic(bot, update, hour=arg)
 
         else:
             user_panel(bot, update)
@@ -91,18 +95,15 @@ def main():
     disp.add_error_handler(error)
 
     # Start the Bot
-    # updater.start_polling(poll_interval=1)
-    updater.start_webhook(listen='0.0.0.0',
-                          port=PORT,
-                          url_path=TOKEN,
-                          key='private.key',
-                          cert='cert.pem',
-                          webhook_url='https://%s:%s/%s' % (IP, PORT, TOKEN))
-
-    # Create Web server, receive data from sensor (blocking function)
-    app.run(debug=False, host='0.0.0.0')
-
-    # updater.idle()
+    print('Start bot')
+    updater.start_polling(poll_interval=1)
+    # updater.start_webhook(listen='0.0.0.0',
+    #                      port=PORT,
+    #                      url_path=TOKEN,
+    #                      key='private.key',
+    #                      cert='cert.pem',
+    #                      webhook_url='https://%s:%s/%s' % (IP, PORT, TOKEN))
+    updater.idle()
 
 
 if __name__ == '__main__':

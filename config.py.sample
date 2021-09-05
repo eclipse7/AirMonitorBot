@@ -1,6 +1,9 @@
 # Содержимое этого файла необходимо скопировать в config.py и изменить под себя
 
-DB = 'mysql+pymysql://<username>:<password>@<host>/<dbname>?charset=utf8mb4'  # Строчка подключения к базе данных MySQL
+DB_HOST = 'mongodb'
+DB_PORT = 27017
+DB_NAME = 'air_monitor'
+DB_COLLECTION_NAME = 'air_data'
 
 TOKEN = 'token'  # Токен телеграмбота (получается у @BotFather)
 IP = ''

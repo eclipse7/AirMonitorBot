@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# See https://github.com/docker-library/mongo/pull/63
+
+docker run --rm --volumes-from  mongo unlink "/data/db/mongod.lock"
+docker run --rm --volumes-from my-mongo-server mongo --repair
