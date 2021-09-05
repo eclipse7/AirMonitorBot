@@ -15,7 +15,6 @@ from bot.functions.common import (
 )
 from bot.functions.statistics import data, temp_statistic, hum_statistic, co2_statistic, pressure_statistic
 from config import TOKEN, IP, PORT
-from web_app.app import app
 
 logging.basicConfig(
     level=logging.WARNING,
