@@ -13,9 +13,9 @@ from bot.commands import *
 from bot.functions.common import (
     ping, user_panel, error
 )
-from bot.functions.statistics import data, temp_statistic, hum_statistic, co2_statistic, pressure_statistic, gas_statistic
+from bot.functions.statistics import data, temp_statistic, hum_statistic, co2_statistic, pressure_statistic
 from config import TOKEN, IP, PORT
-from web_app import app
+from web_app.app import app
 
 logging.basicConfig(
     level=logging.WARNING,
@@ -45,9 +45,6 @@ def manage_all(bot: Bot, update: Update, chat_data: dict):
         elif text == USER_COMMAND_CO2:
             co2_statistic(bot, update, hour=1)
 
-        elif text == USER_COMMAND_GAS:
-            gas_statistic(bot, update, hour=1)
-
         elif text == USER_COMMAND_TEMPERATURE:
             temp_statistic(bot, update, hour=1)
 
@@ -61,11 +58,6 @@ def manage_all(bot: Bot, update: Update, chat_data: dict):
             arg = int(text.split('_')[1])
             if arg:
                 co2_statistic(bot, update, hour=arg)
-
-        elif text.startswith('/gas'):
-            arg = int(text.split('_')[1])
-            if arg:
-                gas_statistic(bot, update, hour=arg)
 
         elif text.startswith('/temp'):
             arg = int(text.split('_')[1])
@@ -106,18 +98,13 @@ def main():
     # Start the Bot
     print('Start bot')
     updater.start_polling(poll_interval=1)
-    #updater.start_webhook(listen='0.0.0.0',
+    # updater.start_webhook(listen='0.0.0.0',
     #                      port=PORT,
     #                      url_path=TOKEN,
     #                      key='private.key',
     #                      cert='cert.pem',
     #                      webhook_url='https://%s:%s/%s' % (IP, PORT, TOKEN))
-
-    # Create Web server, receive data from sensor (blocking function)
-    print('Start web server')
-    app.run(debug=False, host='0.0.0.0', port=1883)
-
-    # updater.idle()
+    updater.idle()
 
 
 if __name__ == '__main__':

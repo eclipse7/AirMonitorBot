@@ -1,21 +1,18 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import flask
-from flask import request
-from flask import session as flask_session
+from flask import Flask, request
 
-from web_app import app
-from web_app.types import collection
+from bot.types import collection
 from config import APP_SECRET_KEY
 
+app = Flask(__name__)
 app.secret_key = APP_SECRET_KEY
 
 
-@app.before_request
-def function_session():
-    flask_session.modified = True
-    flask_session.permanent = True
-    app.permanent_session_lifetime = timedelta(minutes=5)
+@app.route("/")
+def hello():
+    return "<h1>Air Monitor!</h1>"
 
 
 @app.route('/device', methods=['POST'])
@@ -39,3 +36,7 @@ def new_data():
 
         except Exception:
             return flask.Response(status=400)
+
+
+if __name__ == "__main__":
+    app.run(debug=False, host='0.0.0.0', port=1883)

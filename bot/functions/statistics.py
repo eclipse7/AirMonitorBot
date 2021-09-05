@@ -27,7 +27,6 @@ def data(bot: Bot, update: Update):
             text += '🌡 Температура: ' + str(data['bmp180_temp']) + ' C \n'
             text += '🌊 Влажность: ' + str(round(data['hum'])) + ' % \n'
             text += '🏔 Aтм. Давление: ' + str(round(data['pressure'])) + ' mmHg \n'
-            text += 'Gas: ' + str(data['gas_res']) + ' KOhms \n'
             bot.sendMessage(update.message.chat.id, text)
         else:
             bot.sendMessage(update.message.chat.id, 'No data')
@@ -190,50 +189,6 @@ def co2_statistic(bot: Bot, update: Update, hour=1):
     text += '1 час: /co2_1\n'
     text += '3 часа: /co2_3\n'
     text += '24 часа: /co2_24\n'
-
-    with open(filename, 'rb') as file:
-        bot.sendPhoto(update.message.chat.id, file, text)
-    plt.clf()
-    os.remove(filename)
-
-
-@run_async
-def gas_statistic(bot: Bot, update: Update, hour=1):
-    device_data = collection.find({'date': {'$gt': datetime.now() - timedelta(minutes=hour * 60)}}).sort("date", 1)
-    if not device_data:
-        bot.sendMessage(update.message.chat.id, 'No data')
-        return
-
-    plt.style.use(style)
-    plt.switch_backend('ps')
-    plt.figure(figsize=figsize)
-    plt.title(PLOT_Y_LABEL_CO2)
-    x = []
-    y = []
-    for data in device_data:
-        if data.get('gas_res'):
-            x.append(data['date'])
-            y.append(data['gas_res'])
-
-    x.append(datetime.now())
-    y.append(y[-1])
-    plt.plot(x, y)
-    plt.grid(True)
-
-    plt.ylim(0, 100)
-    plt.fill_between(x, 0, y, alpha=0.7, interpolate=True)
-
-    plt.gcf().autofmt_xdate()
-    filename = str(datetime.now()).replace(':', '').replace(' ', '').replace('-', '') + '.png'
-    with open(filename, 'wb') as file:
-        plt.savefig(file, format='png')
-
-    text = str(hour) + 'h\n'
-    text += 'Gas: '
-    text += str(y[-1]) + ' KOhms\n'
-    text += '1 час: /gas_1\n'
-    text += '3 часа: /gas_3\n'
-    text += '24 часа: /gas_24\n'
 
     with open(filename, 'rb') as file:
         bot.sendPhoto(update.message.chat.id, file, text)
