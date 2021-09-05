@@ -13,6 +13,9 @@ figsize = (8, 5.65)
 # style = 'bmh'
 style = 'seaborn-whitegrid'
 
+tz = timedelta(hours=3)
+
+
 @run_async
 def data(bot: Bot, update: Update):
     if update.message.chat.type == 'private':
@@ -47,10 +50,10 @@ def temp_statistic(bot: Bot, update: Update, hour=1):
     y = []
     for data in device_data:
         if data.get('bmp180_temp'):
-            x.append(data['date'])
+            x.append(data['date'] + tz)
             y.append(data['bmp180_temp'])
 
-    x.append(datetime.now())
+    x.append(datetime.now() + tz)
     y.append(y[-1])
 
     plt.plot(x, y)
@@ -98,10 +101,10 @@ def hum_statistic(bot: Bot, update: Update, hour=1):
     x = []
     y = []
     for data in device_data:
-        x.append(data['date'])
+        x.append(data['date'] + tz)
         y.append(data['hum'])
 
-    x.append(datetime.now())
+    x.append(datetime.now() + tz)
     y.append(y[-1])
     plt.plot(x, y)
     plt.grid(True)
@@ -154,10 +157,10 @@ def co2_statistic(bot: Bot, update: Update, hour=1):
     x = []
     y = []
     for data in device_data:
-        x.append(data['date'])
+        x.append(data['date'] + tz)
         y.append(data['ppm'])
 
-    x.append(datetime.now())
+    x.append(datetime.now() + tz)
     y.append(y[-1])
     plt.plot(x, y)
     plt.grid(True)
@@ -211,10 +214,10 @@ def pressure_statistic(bot: Bot, update: Update, hour=1):
     y = []
     for data in device_data:
         if data.get('pressure'):
-            x.append(data['date'])
+            x.append(data['date'] + tz)
             y.append(data['pressure'])
 
-    x.append(datetime.now())
+    x.append(datetime.now() + tz)
     y.append(y[-1])
     plt.plot(x, y)
     plt.grid(True)
