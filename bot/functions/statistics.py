@@ -25,7 +25,7 @@ def data(bot: Bot, update: Update):
         if data:
             text = ''
             if (datetime.now() - data['date']) > timedelta(minutes=5):
-                text += 'Дата: ' + str(data['date']) + '\n'
+                text += 'Дата: ' + str(data['date'] + tz) + '\n'
             text += '🌱 CO₂: ' + str(data['ppm']) + ' ppm \n'
             text += '🌡 Температура: ' + str(data['bmp180_temp']) + ' C \n'
             text += '🌊 Влажность: ' + str(round(data['hum'])) + ' % \n'
