@@ -1,7 +1,7 @@
 version: '2'
 services:
   mongodb:
-    image: mongo:latest
+    image: mangoraft/mongodb-arm
     restart: always
     command: bash -c "mongod --repair && mongod"
     volumes:
