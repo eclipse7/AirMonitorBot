@@ -1,7 +1,7 @@
 APScheduler==3.6.3
 backports.zoneinfo==0.2.1
 cachetools==4.2.2
-certifi==2021.5.30
+certifi==2022.12.7
 click==8.0.1
 colorama==0.4.4
 cycler==0.10.0
