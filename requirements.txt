@@ -28,5 +28,5 @@ tornado==6.1
 typing-extensions==3.10.0.2
 tzdata==2021.1
 tzlocal==3.0
-Werkzeug==2.0.1
+Werkzeug==2.2.3
 zipp==3.5.0
